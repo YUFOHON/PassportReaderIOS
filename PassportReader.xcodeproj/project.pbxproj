@@ -16,6 +16,10 @@
 		3AC0ED882F027BAB0021404F /* PassportReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED872F027BAB0021404F /* PassportReaderTests.swift */; };
 		3AC0ED922F027BAB0021404F /* PassportReaderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED912F027BAB0021404F /* PassportReaderUITests.swift */; };
 		3AC0ED942F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */; };
+		3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */; };
+		3AEAED402F077E14006956CD /* PassportNFCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */; };
+		3AEAED422F077E2E006956CD /* PassportData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEAED412F077E2E006956CD /* PassportData.swift */; };
+		EA1B760BB67187B28BCC08D6 /* Pods_PassportReader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 294B13BC686F43B57B734142 /* Pods_PassportReader.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		294B13BC686F43B57B734142 /* Pods_PassportReader.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PassportReader.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		318792EB5ABFEDC92E1E8048 /* Pods-PassportReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PassportReader.release.xcconfig"; path = "Target Support Files/Pods-PassportReader/Pods-PassportReader.release.xcconfig"; sourceTree = "<group>"; };
 		3AC0ED6D2F027BAA0021404F /* PassportReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PassportReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AC0ED702F027BAA0021404F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3AC0ED722F027BAA0021404F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -49,6 +55,11 @@
 		3AC0ED8D2F027BAB0021404F /* PassportReaderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PassportReaderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AC0ED912F027BAB0021404F /* PassportReaderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportReaderUITests.swift; sourceTree = "<group>"; };
 		3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportReaderUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3AC0EDA02F02852E0021404F /* PassportReader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PassportReader.entitlements; sourceTree = "<group>"; };
+		3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
+		3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportNFCReader.swift; sourceTree = "<group>"; };
+		3AEAED412F077E2E006956CD /* PassportData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportData.swift; sourceTree = "<group>"; };
+		E389F454CB13D84D8F739DE7 /* Pods-PassportReader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PassportReader.debug.xcconfig"; path = "Target Support Files/Pods-PassportReader/Pods-PassportReader.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA1B760BB67187B28BCC08D6 /* Pods_PassportReader.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,10 +91,13 @@
 		3AC0ED642F027BAA0021404F = {
 			isa = PBXGroup;
 			children = (
+				3AC0EDA02F02852E0021404F /* PassportReader.entitlements */,
 				3AC0ED6F2F027BAA0021404F /* PassportReader */,
 				3AC0ED862F027BAB0021404F /* PassportReaderTests */,
 				3AC0ED902F027BAB0021404F /* PassportReaderUITests */,
 				3AC0ED6E2F027BAA0021404F /* Products */,
+				A41B425A041783F9E6395FDA /* Pods */,
+				9FC0CAB09EA93E6098BB4C11 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +121,9 @@
 				3AC0ED792F027BAB0021404F /* Assets.xcassets */,
 				3AC0ED7B2F027BAB0021404F /* LaunchScreen.storyboard */,
 				3AC0ED7E2F027BAB0021404F /* Info.plist */,
+				3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */,
+				3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */,
+				3AEAED412F077E2E006956CD /* PassportData.swift */,
 			);
 			path = PassportReader;
 			sourceTree = "<group>";
@@ -127,6 +145,23 @@
 			path = PassportReaderUITests;
 			sourceTree = "<group>";
 		};
+		9FC0CAB09EA93E6098BB4C11 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				294B13BC686F43B57B734142 /* Pods_PassportReader.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A41B425A041783F9E6395FDA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E389F454CB13D84D8F739DE7 /* Pods-PassportReader.debug.xcconfig */,
+				318792EB5ABFEDC92E1E8048 /* Pods-PassportReader.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -134,9 +169,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AC0ED972F027BAB0021404F /* Build configuration list for PBXNativeTarget "PassportReader" */;
 			buildPhases = (
+				0689521E89608878B09FFA54 /* [CP] Check Pods Manifest.lock */,
 				3AC0ED692F027BAA0021404F /* Sources */,
 				3AC0ED6A2F027BAA0021404F /* Frameworks */,
 				3AC0ED6B2F027BAA0021404F /* Resources */,
+				90CE815ABA4107AAD6A9B644 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -253,6 +290,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0689521E89608878B09FFA54 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PassportReader-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		90CE815ABA4107AAD6A9B644 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PassportReader/Pods-PassportReader-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PassportReader/Pods-PassportReader-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PassportReader/Pods-PassportReader-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3AC0ED692F027BAA0021404F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -261,6 +340,9 @@
 				3AC0ED752F027BAA0021404F /* ViewController.swift in Sources */,
 				3AC0ED712F027BAA0021404F /* AppDelegate.swift in Sources */,
 				3AC0ED732F027BAA0021404F /* SceneDelegate.swift in Sources */,
+				3AEAED422F077E2E006956CD /* PassportData.swift in Sources */,
+				3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */,
+				3AEAED402F077E14006956CD /* PassportNFCReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,14 +519,20 @@
 		};
 		3AC0ED982F027BAB0021404F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E389F454CB13D84D8F739DE7 /* Pods-PassportReader.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "$(PROJECT_DIR)/PassportReader.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZY9S2U3BBK;
+				DEVELOPMENT_TEAM = Y9G8QXUG5E;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PassportReader/Info.plist;
+				INFOPLIST_KEY_NFCReaderUsageDescription = "NFC is needed to scan tags.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is used to scan passport MRZ code";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -455,8 +543,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = hk.ico.csqms.PassportReader;
+				PRODUCT_BUNDLE_IDENTIFIER = hk.ico.csqms.PassportReader.new2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -465,14 +554,20 @@
 		};
 		3AC0ED992F027BAB0021404F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 318792EB5ABFEDC92E1E8048 /* Pods-PassportReader.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "$(PROJECT_DIR)/PassportReader.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZY9S2U3BBK;
+				DEVELOPMENT_TEAM = Y9G8QXUG5E;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PassportReader/Info.plist;
+				INFOPLIST_KEY_NFCReaderUsageDescription = "NFC is needed to scan tags.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is used to scan passport MRZ code";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -483,8 +578,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = hk.ico.csqms.PassportReader;
+				PRODUCT_BUNDLE_IDENTIFIER = hk.ico.csqms.PassportReader.new2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
