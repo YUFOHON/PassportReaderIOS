@@ -17,6 +17,11 @@
 		3AC0ED922F027BAB0021404F /* PassportReaderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED912F027BAB0021404F /* PassportReaderUITests.swift */; };
 		3AC0ED942F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */; };
 		3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */; };
+		3AD08D5A2F0E0F1A0035BF86 /* MrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D592F0E0F1A0035BF86 /* MrzParser.swift */; };
+		3AD08D5C2F0E0F370035BF86 /* BaseMrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D5B2F0E0F370035BF86 /* BaseMrzParser.swift */; };
+		3AD08D5E2F0E0F510035BF86 /* EepMrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D5D2F0E0F510035BF86 /* EepMrzParser.swift */; };
+		3AD08D602F0E0F780035BF86 /* Td3PassportParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D5F2F0E0F780035BF86 /* Td3PassportParser.swift */; };
+		3AD08D632F0E12FA0035BF86 /* EepDocumentReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D622F0E12FA0035BF86 /* EepDocumentReader.swift */; };
 		3AEAED402F077E14006956CD /* PassportNFCReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */; };
 		3AEAED422F077E2E006956CD /* PassportData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEAED412F077E2E006956CD /* PassportData.swift */; };
 		EA1B760BB67187B28BCC08D6 /* Pods_PassportReader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 294B13BC686F43B57B734142 /* Pods_PassportReader.framework */; };
@@ -57,6 +62,11 @@
 		3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportReaderUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3AC0EDA02F02852E0021404F /* PassportReader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PassportReader.entitlements; sourceTree = "<group>"; };
 		3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
+		3AD08D592F0E0F1A0035BF86 /* MrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrzParser.swift; sourceTree = "<group>"; };
+		3AD08D5B2F0E0F370035BF86 /* BaseMrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMrzParser.swift; sourceTree = "<group>"; };
+		3AD08D5D2F0E0F510035BF86 /* EepMrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EepMrzParser.swift; sourceTree = "<group>"; };
+		3AD08D5F2F0E0F780035BF86 /* Td3PassportParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Td3PassportParser.swift; sourceTree = "<group>"; };
+		3AD08D622F0E12FA0035BF86 /* EepDocumentReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EepDocumentReader.swift; sourceTree = "<group>"; };
 		3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportNFCReader.swift; sourceTree = "<group>"; };
 		3AEAED412F077E2E006956CD /* PassportData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportData.swift; sourceTree = "<group>"; };
 		E389F454CB13D84D8F739DE7 /* Pods-PassportReader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PassportReader.debug.xcconfig"; path = "Target Support Files/Pods-PassportReader/Pods-PassportReader.debug.xcconfig"; sourceTree = "<group>"; };
@@ -114,6 +124,8 @@
 		3AC0ED6F2F027BAA0021404F /* PassportReader */ = {
 			isa = PBXGroup;
 			children = (
+				3AD08D612F0E11B70035BF86 /* readers */,
+				3AD08D582F0E0EC80035BF86 /* parser */,
 				3AC0ED702F027BAA0021404F /* AppDelegate.swift */,
 				3AC0ED722F027BAA0021404F /* SceneDelegate.swift */,
 				3AC0ED742F027BAA0021404F /* ViewController.swift */,
@@ -122,7 +134,6 @@
 				3AC0ED7B2F027BAB0021404F /* LaunchScreen.storyboard */,
 				3AC0ED7E2F027BAB0021404F /* Info.plist */,
 				3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */,
-				3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */,
 				3AEAED412F077E2E006956CD /* PassportData.swift */,
 			);
 			path = PassportReader;
@@ -143,6 +154,26 @@
 				3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */,
 			);
 			path = PassportReaderUITests;
+			sourceTree = "<group>";
+		};
+		3AD08D582F0E0EC80035BF86 /* parser */ = {
+			isa = PBXGroup;
+			children = (
+				3AD08D592F0E0F1A0035BF86 /* MrzParser.swift */,
+				3AD08D5B2F0E0F370035BF86 /* BaseMrzParser.swift */,
+				3AD08D5D2F0E0F510035BF86 /* EepMrzParser.swift */,
+				3AD08D5F2F0E0F780035BF86 /* Td3PassportParser.swift */,
+			);
+			path = parser;
+			sourceTree = "<group>";
+		};
+		3AD08D612F0E11B70035BF86 /* readers */ = {
+			isa = PBXGroup;
+			children = (
+				3AEAED3F2F077E14006956CD /* PassportNFCReader.swift */,
+				3AD08D622F0E12FA0035BF86 /* EepDocumentReader.swift */,
+			);
+			path = readers;
 			sourceTree = "<group>";
 		};
 		9FC0CAB09EA93E6098BB4C11 /* Frameworks */ = {
@@ -340,9 +371,14 @@
 				3AC0ED752F027BAA0021404F /* ViewController.swift in Sources */,
 				3AC0ED712F027BAA0021404F /* AppDelegate.swift in Sources */,
 				3AC0ED732F027BAA0021404F /* SceneDelegate.swift in Sources */,
+				3AD08D632F0E12FA0035BF86 /* EepDocumentReader.swift in Sources */,
 				3AEAED422F077E2E006956CD /* PassportData.swift in Sources */,
 				3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */,
+				3AD08D5A2F0E0F1A0035BF86 /* MrzParser.swift in Sources */,
+				3AD08D5E2F0E0F510035BF86 /* EepMrzParser.swift in Sources */,
 				3AEAED402F077E14006956CD /* PassportNFCReader.swift in Sources */,
+				3AD08D602F0E0F780035BF86 /* Td3PassportParser.swift in Sources */,
+				3AD08D5C2F0E0F370035BF86 /* BaseMrzParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
