@@ -29,5 +29,13 @@
     <string>This app needs NFC access to read passport data</string>
     <key>NSCameraUsageDescription</key>
     <string>This app needs camera access to scan passport MRZ</string>
+	
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app saves the scanned passport image for verification.</string>
+
+    <!-- Optional but recommended -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app may access saved images for verification purposes.</string>
+
 </dict>
 </plist>

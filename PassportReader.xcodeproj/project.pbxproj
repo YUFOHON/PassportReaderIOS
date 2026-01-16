@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A37636C2F176E10009BF7BC /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A37636B2F176E10009BF7BC /* CameraManager.swift */; };
+		3A3763742F176EC1009BF7BC /* MRZCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763732F176EC1009BF7BC /* MRZCleaner.swift */; };
+		3A3763762F176ECD009BF7BC /* MRZValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763752F176ECD009BF7BC /* MRZValidator.swift */; };
+		3A3763782F176ED8009BF7BC /* MRZExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763772F176ED8009BF7BC /* MRZExtractor.swift */; };
+		3A3763842F1776CF009BF7BC /* ScanOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763832F1776CF009BF7BC /* ScanOverlayView.swift */; };
+		3A3763882F177DA8009BF7BC /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763872F177DA8009BF7BC /* CameraViewController.swift */; };
+		3A37638B2F177DE3009BF7BC /* DocumentAlignmentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A37638A2F177DE3009BF7BC /* DocumentAlignmentDetector.swift */; };
+		3A37638D2F177E17009BF7BC /* MRZDetectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A37638C2F177E17009BF7BC /* MRZDetectionHandler.swift */; };
+		3A3763912F178504009BF7BC /* OCRProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763902F178504009BF7BC /* OCRProcessor.swift */; };
+		3A3763932F178534009BF7BC /* MrzParserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763922F178534009BF7BC /* MrzParserManager.swift */; };
+		3A3763952F178553009BF7BC /* MRZInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763942F178553009BF7BC /* MRZInfo.swift */; };
+		3A37639A2F178589009BF7BC /* BitmapUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3763992F178589009BF7BC /* BitmapUtils.swift */; };
+		3A37639C2F17859D009BF7BC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A37639B2F17859D009BF7BC /* Constants.swift */; };
 		3AC0ED712F027BAA0021404F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED702F027BAA0021404F /* AppDelegate.swift */; };
 		3AC0ED732F027BAA0021404F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED722F027BAA0021404F /* SceneDelegate.swift */; };
 		3AC0ED752F027BAA0021404F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED742F027BAA0021404F /* ViewController.swift */; };
@@ -16,7 +29,10 @@
 		3AC0ED882F027BAB0021404F /* PassportReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED872F027BAB0021404F /* PassportReaderTests.swift */; };
 		3AC0ED922F027BAB0021404F /* PassportReaderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED912F027BAB0021404F /* PassportReaderUITests.swift */; };
 		3AC0ED942F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */; };
-		3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */; };
+		3AC49BAE2F19E8F1007BEB7A /* AlignmentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC49BAD2F19E8F1007BEB7A /* AlignmentState.swift */; };
+		3AC49BB02F19E927007BEB7A /* DocumentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC49BAF2F19E927007BEB7A /* DocumentType.swift */; };
+		3AC49BB22F19E947007BEB7A /* MRZResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC49BB12F19E947007BEB7A /* MRZResult.swift */; };
+		3AC49BB72F19EAD4007BEB7A /* MRZGuidanceOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC49BB62F19EAD4007BEB7A /* MRZGuidanceOverlay.swift */; };
 		3AD08D5A2F0E0F1A0035BF86 /* MrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D592F0E0F1A0035BF86 /* MrzParser.swift */; };
 		3AD08D5C2F0E0F370035BF86 /* BaseMrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D5B2F0E0F370035BF86 /* BaseMrzParser.swift */; };
 		3AD08D5E2F0E0F510035BF86 /* EepMrzParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD08D5D2F0E0F510035BF86 /* EepMrzParser.swift */; };
@@ -47,6 +63,19 @@
 /* Begin PBXFileReference section */
 		294B13BC686F43B57B734142 /* Pods_PassportReader.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PassportReader.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		318792EB5ABFEDC92E1E8048 /* Pods-PassportReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PassportReader.release.xcconfig"; path = "Target Support Files/Pods-PassportReader/Pods-PassportReader.release.xcconfig"; sourceTree = "<group>"; };
+		3A37636B2F176E10009BF7BC /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		3A3763732F176EC1009BF7BC /* MRZCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZCleaner.swift; sourceTree = "<group>"; };
+		3A3763752F176ECD009BF7BC /* MRZValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZValidator.swift; sourceTree = "<group>"; };
+		3A3763772F176ED8009BF7BC /* MRZExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZExtractor.swift; sourceTree = "<group>"; };
+		3A3763832F1776CF009BF7BC /* ScanOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanOverlayView.swift; sourceTree = "<group>"; };
+		3A3763872F177DA8009BF7BC /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		3A37638A2F177DE3009BF7BC /* DocumentAlignmentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentAlignmentDetector.swift; sourceTree = "<group>"; };
+		3A37638C2F177E17009BF7BC /* MRZDetectionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZDetectionHandler.swift; sourceTree = "<group>"; };
+		3A3763902F178504009BF7BC /* OCRProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRProcessor.swift; sourceTree = "<group>"; };
+		3A3763922F178534009BF7BC /* MrzParserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrzParserManager.swift; sourceTree = "<group>"; };
+		3A3763942F178553009BF7BC /* MRZInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZInfo.swift; sourceTree = "<group>"; };
+		3A3763992F178589009BF7BC /* BitmapUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapUtils.swift; sourceTree = "<group>"; };
+		3A37639B2F17859D009BF7BC /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3AC0ED6D2F027BAA0021404F /* PassportReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PassportReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AC0ED702F027BAA0021404F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3AC0ED722F027BAA0021404F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,7 +90,10 @@
 		3AC0ED912F027BAB0021404F /* PassportReaderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportReaderUITests.swift; sourceTree = "<group>"; };
 		3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportReaderUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3AC0EDA02F02852E0021404F /* PassportReader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PassportReader.entitlements; sourceTree = "<group>"; };
-		3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
+		3AC49BAD2F19E8F1007BEB7A /* AlignmentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentState.swift; sourceTree = "<group>"; };
+		3AC49BAF2F19E927007BEB7A /* DocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentType.swift; sourceTree = "<group>"; };
+		3AC49BB12F19E947007BEB7A /* MRZResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZResult.swift; sourceTree = "<group>"; };
+		3AC49BB62F19EAD4007BEB7A /* MRZGuidanceOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZGuidanceOverlay.swift; sourceTree = "<group>"; };
 		3AD08D592F0E0F1A0035BF86 /* MrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MrzParser.swift; sourceTree = "<group>"; };
 		3AD08D5B2F0E0F370035BF86 /* BaseMrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseMrzParser.swift; sourceTree = "<group>"; };
 		3AD08D5D2F0E0F510035BF86 /* EepMrzParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EepMrzParser.swift; sourceTree = "<group>"; };
@@ -98,6 +130,78 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3A3763792F1770D4009BF7BC /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				3A37636B2F176E10009BF7BC /* CameraManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		3A37637A2F17710D009BF7BC /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				3A3763872F177DA8009BF7BC /* CameraViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		3A37637B2F177121009BF7BC /* MRZ */ = {
+			isa = PBXGroup;
+			children = (
+				3A37637D2F177165009BF7BC /* Processing */,
+				3A37637C2F17712B009BF7BC /* Model */,
+			);
+			path = MRZ;
+			sourceTree = "<group>";
+		};
+		3A37637C2F17712B009BF7BC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		3A37637D2F177165009BF7BC /* Processing */ = {
+			isa = PBXGroup;
+			children = (
+				3A3763732F176EC1009BF7BC /* MRZCleaner.swift */,
+				3A3763752F176ECD009BF7BC /* MRZValidator.swift */,
+				3A3763772F176ED8009BF7BC /* MRZExtractor.swift */,
+				3A3763922F178534009BF7BC /* MrzParserManager.swift */,
+			);
+			path = Processing;
+			sourceTree = "<group>";
+		};
+		3A37637E2F1771E4009BF7BC /* models */ = {
+			isa = PBXGroup;
+			children = (
+				3AEAED412F077E2E006956CD /* PassportData.swift */,
+				3A3763942F178553009BF7BC /* MRZInfo.swift */,
+				3AC49BAD2F19E8F1007BEB7A /* AlignmentState.swift */,
+				3AC49BAF2F19E927007BEB7A /* DocumentType.swift */,
+				3AC49BB12F19E947007BEB7A /* MRZResult.swift */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
+		3A3763892F177DD2009BF7BC /* Detection */ = {
+			isa = PBXGroup;
+			children = (
+				3A37638A2F177DE3009BF7BC /* DocumentAlignmentDetector.swift */,
+				3A37638C2F177E17009BF7BC /* MRZDetectionHandler.swift */,
+			);
+			path = Detection;
+			sourceTree = "<group>";
+		};
+		3A3763982F17857F009BF7BC /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				3A3763992F178589009BF7BC /* BitmapUtils.swift */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		3AC0ED642F027BAA0021404F = {
 			isa = PBXGroup;
 			children = (
@@ -124,6 +228,13 @@
 		3AC0ED6F2F027BAA0021404F /* PassportReader */ = {
 			isa = PBXGroup;
 			children = (
+				3AC49BB52F19EAC6007BEB7A /* Views */,
+				3A3763982F17857F009BF7BC /* utils */,
+				3A3763892F177DD2009BF7BC /* Detection */,
+				3A37637E2F1771E4009BF7BC /* models */,
+				3A37637B2F177121009BF7BC /* MRZ */,
+				3A37637A2F17710D009BF7BC /* ViewControllers */,
+				3A3763792F1770D4009BF7BC /* Managers */,
 				3AD08D612F0E11B70035BF86 /* readers */,
 				3AD08D582F0E0EC80035BF86 /* parser */,
 				3AC0ED702F027BAA0021404F /* AppDelegate.swift */,
@@ -133,8 +244,9 @@
 				3AC0ED792F027BAB0021404F /* Assets.xcassets */,
 				3AC0ED7B2F027BAB0021404F /* LaunchScreen.storyboard */,
 				3AC0ED7E2F027BAB0021404F /* Info.plist */,
-				3AC0EDA12F0288C00021404F /* MRZScannerViewController.swift */,
-				3AEAED412F077E2E006956CD /* PassportData.swift */,
+				3A3763832F1776CF009BF7BC /* ScanOverlayView.swift */,
+				3A3763902F178504009BF7BC /* OCRProcessor.swift */,
+				3A37639B2F17859D009BF7BC /* Constants.swift */,
 			);
 			path = PassportReader;
 			sourceTree = "<group>";
@@ -154,6 +266,14 @@
 				3AC0ED932F027BAB0021404F /* PassportReaderUITestsLaunchTests.swift */,
 			);
 			path = PassportReaderUITests;
+			sourceTree = "<group>";
+		};
+		3AC49BB52F19EAC6007BEB7A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3AC49BB62F19EAD4007BEB7A /* MRZGuidanceOverlay.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		3AD08D582F0E0EC80035BF86 /* parser */ = {
@@ -370,15 +490,31 @@
 			files = (
 				3AC0ED752F027BAA0021404F /* ViewController.swift in Sources */,
 				3AC0ED712F027BAA0021404F /* AppDelegate.swift in Sources */,
+				3A3763762F176ECD009BF7BC /* MRZValidator.swift in Sources */,
+				3A37639C2F17859D009BF7BC /* Constants.swift in Sources */,
 				3AC0ED732F027BAA0021404F /* SceneDelegate.swift in Sources */,
 				3AD08D632F0E12FA0035BF86 /* EepDocumentReader.swift in Sources */,
+				3AC49BAE2F19E8F1007BEB7A /* AlignmentState.swift in Sources */,
+				3A3763952F178553009BF7BC /* MRZInfo.swift in Sources */,
+				3A3763782F176ED8009BF7BC /* MRZExtractor.swift in Sources */,
 				3AEAED422F077E2E006956CD /* PassportData.swift in Sources */,
-				3AC0EDA22F0288C00021404F /* MRZScannerViewController.swift in Sources */,
+				3AC49BB02F19E927007BEB7A /* DocumentType.swift in Sources */,
+				3A3763882F177DA8009BF7BC /* CameraViewController.swift in Sources */,
+				3A37638D2F177E17009BF7BC /* MRZDetectionHandler.swift in Sources */,
 				3AD08D5A2F0E0F1A0035BF86 /* MrzParser.swift in Sources */,
 				3AD08D5E2F0E0F510035BF86 /* EepMrzParser.swift in Sources */,
+				3AC49BB72F19EAD4007BEB7A /* MRZGuidanceOverlay.swift in Sources */,
+				3A37639A2F178589009BF7BC /* BitmapUtils.swift in Sources */,
 				3AEAED402F077E14006956CD /* PassportNFCReader.swift in Sources */,
 				3AD08D602F0E0F780035BF86 /* Td3PassportParser.swift in Sources */,
+				3A37638B2F177DE3009BF7BC /* DocumentAlignmentDetector.swift in Sources */,
+				3AC49BB22F19E947007BEB7A /* MRZResult.swift in Sources */,
+				3A3763842F1776CF009BF7BC /* ScanOverlayView.swift in Sources */,
+				3A37636C2F176E10009BF7BC /* CameraManager.swift in Sources */,
+				3A3763932F178534009BF7BC /* MrzParserManager.swift in Sources */,
+				3A3763742F176EC1009BF7BC /* MRZCleaner.swift in Sources */,
 				3AD08D5C2F0E0F370035BF86 /* BaseMrzParser.swift in Sources */,
+				3A3763912F178504009BF7BC /* OCRProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

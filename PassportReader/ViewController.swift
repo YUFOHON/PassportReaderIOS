@@ -1,7 +1,7 @@
 import UIKit
 import CoreNFC
 
-class ViewController: UIViewController, OCRScannerViewControllerDelegate {
+class ViewController: UIViewController {
     
     // MARK: - UI Components
     private let scrollView = UIScrollView()
@@ -272,6 +272,7 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         view.addGestureRecognizer(tapGesture)
     }
     
+    
     private func checkNFCAvailability() {
         if !NFCNDEFReaderSession.readingAvailable {
             statusLabel.text = "⚠️ NFC not available on this device"
@@ -392,10 +393,69 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
     }
     
     @objc private func scanMRZTapped() {
-        let ocrScanner = OCRScannerViewController()
-        ocrScanner.delegate = self
-        ocrScanner.modalPresentationStyle = .fullScreen
-        present(ocrScanner, animated: true)
+        let cameraVC = CameraViewController()
+        cameraVC.delegate = self  // ADD THIS LINE
+        cameraVC.modalPresentationStyle = .fullScreen
+        present(cameraVC, animated: true)
+    }
+    
+    @objc private func handleMRZScanComplete(_ notification: Notification) {
+        guard let userInfo = notification.userInfo else { return }
+        
+        print("📬 Received MRZ scan notification")
+        
+        // Extract data from notification
+        if let docNum = userInfo[Constants.EXTRA_DOC_NUM] as? String {
+            docNumberField.text = docNum
+        }
+        
+        if let dob = userInfo[Constants.EXTRA_DOB] as? String {
+            birthDateField.text = dob
+        }
+        
+        if let expiry = userInfo[Constants.EXTRA_EXPIRY] as? String {
+            expiryDateField.text = expiry
+        }
+        
+        // Determine document type
+        if let docType = userInfo[Constants.EXTRA_DOC_TYPE] as? String {
+            if docType.contains("EEP") || docType == "EE" {
+                currentDocumentType = .eep
+            } else if docType.contains("P") {
+                currentDocumentType = .passport
+            } else {
+                currentDocumentType = .unknown
+            }
+        }
+        
+        // Update UI
+        updateDocumentTypeUI()
+        
+        // Show parsed data in result view
+        var resultText = """
+        ═══════════════════════════════
+        📷 MRZ SCAN RESULT
+        ═══════════════════════════════
+        
+        """
+        
+        for (key, value) in userInfo.sorted(by: { ($0.key as? String ?? "") < ($1.key as? String ?? "") }) {
+            if let keyStr = key as? String, let valueStr = value as? String {
+                resultText += "\(keyStr): \(valueStr)\n"
+            }
+        }
+        
+        resultText += """
+        
+        ───────────────────────────────
+        ✅ Fields populated automatically
+        Tap 'Verify MRZ Data' to check
+        ───────────────────────────────
+        """
+        
+        resultTextView.text = resultText
+        statusLabel.text = "✅ MRZ scanned! Verify and read NFC."
+        statusLabel.textColor = .systemGreen
     }
     
     @objc private func readNFCTapped() {
@@ -427,7 +487,6 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         case .passport:
             attemptPassportRead(docNum: docNum, dob: dob, expiry: expiry)
         case .unknown:
-            // Default to passport reader, could also show a picker
             showDocumentTypePicker(docNum: docNum, dob: dob, expiry: expiry)
         }
     }
@@ -544,105 +603,6 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    // MARK: - OCR Scanner Delegate
-    
-    func ocrScannerDidScan(recognizedText: String) {
-        print("📷 OCR Scanned: \(recognizedText)")
-        
-        // Parse the MRZ using your parsers
-        let lines = recognizedText.split(separator: "\n").map(String.init)
-        let parsers: [MrzParser] = [EepMrzParser(), Td3PassportParser()]
-        
-        var parsedData: [String: String]?
-        var usedParser: MrzParser?
-        
-        for line in lines {
-            for parser in parsers {
-                if parser.canParse(line) {
-                    if let data = parser.parse(line) {
-                        parsedData = data
-                        usedParser = parser
-                        break
-                    }
-                }
-            }
-            if parsedData != nil { break }
-        }
-        
-        // Also try parsing the full text for multi-line MRZ
-        if parsedData == nil {
-            let fullText = recognizedText.replacingOccurrences(of: "\n", with: "")
-            for parser in parsers {
-                if parser.canParse(fullText) {
-                    if let data = parser.parse(fullText) {
-                        parsedData = data
-                        usedParser = parser
-                        break
-                    }
-                }
-            }
-        }
-        
-        guard let data = parsedData else {
-            showAlert(title: "Parse Error", message: "Could not parse MRZ data from scan")
-            return
-        }
-        
-        // Determine document type and populate fields
-        let docType = data["DOC_TYPE"] ?? ""
-        
-        if docType == "EEP" || usedParser is EepMrzParser {
-            currentDocumentType = .eep
-            print("✅ Detected: EEP (往來港澳通行證)")
-        } else if docType == "TD3_PASSPORT" || usedParser is Td3PassportParser {
-            currentDocumentType = .passport
-            print("✅ Detected: TD3 Passport")
-        } else {
-            currentDocumentType = .unknown
-            print("⚠️ Unknown document type: \(docType)")
-        }
-        
-        // Populate text fields
-        if let docNum = data["DOC_NUM"] {
-            docNumberField.text = docNum
-        }
-        
-        if let dob = data["DOB"] {
-            birthDateField.text = dob
-        }
-        
-        if let expiry = data["EXPIRY"] {
-            expiryDateField.text = expiry
-        }
-        
-        // Update UI
-        updateDocumentTypeUI()
-        
-        // Show parsed data in result view
-        var resultText = """
-        ═══════════════════════════════
-        📷 MRZ SCAN RESULT
-        ═══════════════════════════════
-        
-        """
-        
-        for (key, value) in data.sorted(by: { $0.key < $1.key }) {
-            resultText += "\(key): \(value)\n"
-        }
-        
-        resultText += """
-        
-        ───────────────────────────────
-        ✅ Fields populated automatically
-        Tap 'Verify MRZ Data' to check
-        ───────────────────────────────
-        """
-        
-        resultTextView.text = resultText
-        statusLabel.text = "✅ MRZ scanned! Verify and read NFC."
-        statusLabel.textColor = .systemGreen
     }
     
     private func updateDocumentTypeUI() {
@@ -811,17 +771,6 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         
         result += "\nSOD Present: \(data.sodPresent ? "Yes ✓" : "No ✗")\n"
         
-        // Note: The refactored version removed these fields, so comment them out or remove
-        // if let digestAlgo = data.sodDigestAlgorithm {
-        //     result += "Digest Algorithm: \(digestAlgo)\n"
-        // }
-        // if let sigAlgo = data.sodSignatureAlgorithm {
-        //     result += "Signature Algorithm: \(sigAlgo)\n"
-        // }
-        // if let ldsVersion = data.sodLdsVersion {
-        //     result += "LDS Version: \(ldsVersion)\n"
-        // }
-        
         // Display all Data Group hashes
         if !data.dataGroupHashes.isEmpty {
             result += "\n📊 DATA GROUP HASHES:\n"
@@ -851,8 +800,6 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         ───────────────────────────────
         """
         result += "\n"
-//        result += "Document Type: \(data.documentType.rawValue)\n"
-//        result += "Document Code: \(data.documentCode ?? "N/A")\n"
         result += "Card Number: \(data.cardNumber ?? "N/A")\n"
         result += "Issuing Country: \(data.issuingCountry ?? "N/A")\n"
         
@@ -991,13 +938,6 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         if let sodData = data.rawSODData {
             result += "Size: \(sodData.count) bytes\n"
             
-//            if let digestAlgo = data.sodDigestAlgorithm {
-//                result += "Digest Algorithm: \(digestAlgo)\n"
-//            }
-//            if let sigAlgo = data.sodSignatureAlgorithm {
-//                result += "Signature Algorithm: \(sigAlgo)\n"
-//            }
-            
             // Display all Data Group hashes
             if !data.dataGroupHashes.isEmpty {
                 result += "\n📊 DATA GROUP HASHES:\n"
@@ -1041,10 +981,8 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         result += "Nationality: \(data.nationality ?? "N/A")\n"
         result += "Issuing Country: \(data.issuingState ?? "N/A")\n"
         result += "Gender: \(data.gender ?? "N/A")\n"
-        result += "Date of Birth: \(String(describing: data.dateOfBirth)))\n"
+        result += "Date of Birth: \(String(describing: data.dateOfBirth))\n"
         result += "Date of Expiry: \(String(describing: data.dateOfExpiry))\n"
-//        result += "Date of Birth: \(formatDate(data.dateOfBirth))\n"
-//        result += "Date of Expiry: \(formatDate(data.dateOfExpiry))\n"
         if let optData = data.optionalData1, !optData.isEmpty {
             result += "Optional Data: \(optData)\n"
         }
@@ -1200,6 +1138,62 @@ class ViewController: UIViewController, OCRScannerViewControllerDelegate {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+    
+    
 }
-
-
+extension ViewController: CameraViewControllerDelegate {
+    func cameraViewController(_ controller: CameraViewController, didScanMRZ data: [String: String]) {
+        print("📬 Received MRZ scan data via delegate")
+        
+        // Extract data
+        if let docNum = data[Constants.EXTRA_DOC_NUM] {
+            docNumberField.text = docNum
+        }
+        
+        if let dob = data[Constants.EXTRA_DOB] {
+            birthDateField.text = dob
+        }
+        
+        if let expiry = data[Constants.EXTRA_EXPIRY] {
+            expiryDateField.text = expiry
+        }
+        
+        // Determine document type
+        if let docType = data[Constants.EXTRA_DOC_TYPE] {
+            if docType.contains("EEP") || docType == "EE" {
+                currentDocumentType = .eep
+            } else if docType.contains("P") {
+                currentDocumentType = .passport
+            } else {
+                currentDocumentType = .unknown
+            }
+        }
+        
+        // Update UI
+        updateDocumentTypeUI()
+        
+        // Show parsed data in result view
+        var resultText = """
+        ═══════════════════════════════
+        📷 MRZ SCAN RESULT
+        ═══════════════════════════════
+        
+        """
+        
+        for (key, value) in data.sorted(by: { $0.key < $1.key }) {
+            resultText += "\(key): \(value)\n"
+        }
+        
+        resultText += """
+        
+        ───────────────────────────────
+        ✅ Fields populated automatically
+        Tap 'Verify MRZ Data' to check
+        ───────────────────────────────
+        """
+        
+        resultTextView.text = resultText
+        statusLabel.text = "✅ MRZ scanned! Verify and read NFC."
+        statusLabel.textColor = .systemGreen
+    }
+}
