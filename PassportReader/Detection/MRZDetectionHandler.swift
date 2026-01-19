@@ -1,4 +1,3 @@
-
 import UIKit
 import Vision
 import CoreImage
@@ -7,7 +6,6 @@ import os
 protocol MRZDetectionHandlerDelegate: AnyObject {
     func detectionHandler(_ handler: MRZDetectionHandler, didDetectMRZ data: [String: String])
 }
-
 
 class MRZDetectionHandler {
     
@@ -38,21 +36,33 @@ class MRZDetectionHandler {
     private let mrzCleaner = MRZCleaner()
     private let mrzExtractor = MRZExtractor()
     
-    // Vision requests
+    // Document Segmentation Request (iOS 15+)
+    private lazy var documentSegmentationRequest: VNDetectDocumentSegmentationRequest = {
+        let request = VNDetectDocumentSegmentationRequest { [weak self] request, error in
+            self?.handleDocumentSegmentation(request: request, error: error)
+        }
+        return request
+    }()
+    
+    // Fallback rectangle request for older iOS
     private lazy var rectangleRequest: VNDetectRectanglesRequest = {
         let request = VNDetectRectanglesRequest { [weak self] request, error in
             self?.handleRectangleDetection(request: request, error: error)
         }
         request.minimumAspectRatio = 0.5
-        request.maximumAspectRatio = 2.0
+        request.maximumAspectRatio = 1.0
         request.minimumSize = 0.2
         request.maximumObservations = 1
-        request.minimumConfidence = 0.6
+        request.minimumConfidence = 0.5
+        request.quadratureTolerance = 15
         return request
     }()
     
     private var currentSampleBuffer: CMSampleBuffer?
     private var detectedMRZType: MRZDocumentType?
+    
+    private var smoothedRect: CGRect?
+    private let smoothingFactor: CGFloat = 0.3
     
     // MARK: - Initialization
     init(context: UIViewController,
@@ -64,9 +74,7 @@ class MRZDetectionHandler {
          alignmentDetector: DocumentAlignmentDetector,
          cameraManager: CameraManager,
          delegate: MRZDetectionHandlerDelegate?
-
     ) {
-        
         self.context = context
         self.guidanceOverlay = guidanceOverlay
         self.instructionLabel = instructionLabel
@@ -89,35 +97,213 @@ class MRZDetectionHandler {
         
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: [:])
         
         do {
-            try handler.perform([rectangleRequest])
+            if #available(iOS 17.0, *) {
+                try handler.perform([documentSegmentationRequest])
+            } else {
+                try handler.perform([rectangleRequest])
+            }
         } catch {
-            print("⚠️ Rectangle detection failed: \(error)")
+            print("⚠️ Document detection failed: \(error)")
             updateUIForNoDetection()
         }
     }
-    
-    // MARK: - Rectangle Detection Handler
-    private func handleRectangleDetection(request: VNRequest, error: Error?) {
-        guard let observations = request.results as? [VNRectangleObservation],
-              let observation = observations.first else {
+    // MARK: - Document Segmentation Handler (iOS 15+)
+    @available(iOS 17.0, *)
+    private func handleDocumentSegmentation(request: VNRequest, error: Error?) {
+        if let error = error {
+            print("⚠️ Document segmentation error: \(error)")
             updateUIForNoDetection()
             return
         }
         
+        guard let results = request.results as? [VNRectangleObservation],
+              let observation = results.first else {
+            smoothedRect = nil
+            updateUIForNoDetection()
+            return
+        }
+        
+        let confidence = observation.confidence
+        print("📄 Document detected with confidence: \(confidence)")
+        
+        guard confidence > 0.5 else {
+            updateUIForNoDetection()
+            return
+        }
+        
+        processDocumentObservation(boundingBox: observation.boundingBox, confidence: confidence)
+    }
+    
+    // MARK: - Rectangle Detection Handler (Fallback)
+    private func handleRectangleDetection(request: VNRequest, error: Error?) {
+        guard let observations = request.results as? [VNRectangleObservation],
+              let observation = observations.first else {
+            smoothedRect = nil
+            updateUIForNoDetection()
+            return
+        }
+        
+        processDocumentObservation(boundingBox: observation.boundingBox, confidence: observation.confidence)
+    }
+    
+    // MARK: - Common Processing
+    private func processDocumentObservation(boundingBox: CGRect, confidence: Float) {
         guard let alignmentDetector = alignmentDetector else { return }
         
-        let alignmentResult = alignmentDetector.analyzeAlignment(observation: observation)
+        // Convert Vision coordinates to UIKit coordinates
+        let previewBounds = alignmentDetector.cachedPreviewBounds
+        guard previewBounds.width > 0, previewBounds.height > 0 else { return }
+        
+        let documentRect = convertVisionToUIKit(boundingBox, in: previewBounds)
+        
+        // Apply smoothing
+        let smoothedDocument = smoothRect(documentRect)
+        
+        // Analyze alignment
+        let alignmentResult = analyzeDocumentAlignment(
+            documentRect: smoothedDocument,
+            confidence: CGFloat(confidence)
+        )
         
         DispatchQueue.main.async { [weak self] in
             self?.updateUI(with: alignmentResult)
         }
         
         checkStabilityAndTriggerOCR(alignmentResult: alignmentResult)
-        
         lastAlignmentResult = alignmentResult
+    }
+    
+    private func convertVisionToUIKit(_ visionRect: CGRect, in bounds: CGRect) -> CGRect {
+        // Vision coordinates are rotated 90° relative to UIKit when camera is portrait
+        // Swap x/y and width/height
+        let x = (1 - visionRect.maxY) * bounds.width
+        let y = visionRect.minX * bounds.height
+        let width = visionRect.height * bounds.width
+        let height = visionRect.width * bounds.height
+        
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
+    
+    private func analyzeDocumentAlignment(documentRect: CGRect, confidence: CGFloat) -> AlignmentResult {
+        guard let alignmentDetector = alignmentDetector else {
+            return .notDetected
+        }
+        
+        let guideBox = alignmentDetector.guideBoxFrame
+        guard guideBox.width > 0, guideBox.height > 0 else {
+            return .notDetected
+        }
+        
+        // Calculate metrics
+        let sizeRatio = calculateSizeRatio(documentRect: documentRect, guideBox: guideBox)
+        let centerOffset = calculateCenterOffset(documentRect: documentRect, guideBox: guideBox)
+        let overlapRatio = calculateOverlapRatio(documentRect: documentRect, guideBox: guideBox)
+        
+        // Detect document type
+        let aspectRatio = documentRect.width / documentRect.height
+        let documentType = DocumentType.detect(from: aspectRatio)
+        
+        // Determine instruction
+        let instruction = determineInstruction(
+            sizeRatio: sizeRatio,
+            centerOffset: centerOffset,
+            overlapRatio: overlapRatio
+        )
+        
+        let isAligned = instruction == .holdSteady
+        
+        print("📐 Size: \(String(format: "%.2f", sizeRatio)), Offset: (\(String(format: "%.2f", centerOffset.x)), \(String(format: "%.2f", centerOffset.y))), Overlap: \(String(format: "%.2f", overlapRatio)), Aligned: \(isAligned)")
+        
+        return AlignmentResult(
+            instruction: instruction,
+            isAligned: isAligned,
+            confidence: confidence,
+            detectedRect: documentRect,
+            documentType: documentType
+        )
+    }
+    
+    // MARK: - Alignment Calculations
+    private func calculateSizeRatio(documentRect: CGRect, guideBox: CGRect) -> CGFloat {
+        let widthRatio = documentRect.width / guideBox.width
+        let heightRatio = documentRect.height / guideBox.height
+        return (widthRatio + heightRatio) / 2
+    }
+    
+    private func calculateCenterOffset(documentRect: CGRect, guideBox: CGRect) -> CGPoint {
+        let docCenter = CGPoint(x: documentRect.midX, y: documentRect.midY)
+        let guideCenter = CGPoint(x: guideBox.midX, y: guideBox.midY)
+        
+        return CGPoint(
+            x: (docCenter.x - guideCenter.x) / guideBox.width,
+            y: (docCenter.y - guideCenter.y) / guideBox.height
+        )
+    }
+    
+    private func calculateOverlapRatio(documentRect: CGRect, guideBox: CGRect) -> CGFloat {
+        let intersection = documentRect.intersection(guideBox)
+        guard !intersection.isNull else { return 0 }
+        
+        let intersectionArea = intersection.width * intersection.height
+        let guideBoxArea = guideBox.width * guideBox.height
+        
+        return intersectionArea / guideBoxArea
+    }
+    
+    private func determineInstruction(sizeRatio: CGFloat, centerOffset: CGPoint, overlapRatio: CGFloat) -> AlignmentInstruction {
+        let sizeThresholdMin: CGFloat = 0.70
+        let sizeThresholdMax: CGFloat = 1.20
+        let centerOffsetThreshold: CGFloat = 0.10
+        let overlapThreshold: CGFloat = 0.80
+        
+        if sizeRatio < sizeThresholdMin {
+            return .moveCloser
+        }
+        
+        if sizeRatio > sizeThresholdMax {
+            return .moveBackward
+        }
+        
+        if centerOffset.x < -centerOffsetThreshold {
+            return .moveRight
+        }
+        
+        if centerOffset.x > centerOffsetThreshold {
+            return .moveLeft
+        }
+        
+        if centerOffset.y < -centerOffsetThreshold {
+            return .moveDown
+        }
+        
+        if centerOffset.y > centerOffsetThreshold {
+            return .moveUp
+        }
+        
+        if overlapRatio < overlapThreshold {
+            return .placeDocument
+        }
+        
+        return .holdSteady
+    }
+    
+    private func smoothRect(_ newRect: CGRect) -> CGRect {
+        guard let previous = smoothedRect else {
+            smoothedRect = newRect
+            return newRect
+        }
+        
+        let smoothed = CGRect(
+            x: previous.minX + (newRect.minX - previous.minX) * smoothingFactor,
+            y: previous.minY + (newRect.minY - previous.minY) * smoothingFactor,
+            width: previous.width + (newRect.width - previous.width) * smoothingFactor,
+            height: previous.height + (newRect.height - previous.height) * smoothingFactor
+        )
+        smoothedRect = smoothed
+        return smoothed
     }
     
     // MARK: - Stability Check
@@ -125,10 +311,8 @@ class MRZDetectionHandler {
         if alignmentResult.isAligned {
             stableFrameCount += 1
             if stableFrameCount >= requiredStableFrames {
-                
                 triggerOCR()
             }
-            
         } else {
             stableFrameCount = 0
         }
@@ -153,6 +337,11 @@ class MRZDetectionHandler {
     
     // MARK: - OCR Processing
     private func performOCR(on pixelBuffer: CVPixelBuffer) {
+        guard let croppedImage = cropToGuideBox(pixelBuffer: pixelBuffer) else {
+            resetOCRState()
+            return
+        }
+        
         let textRequest = VNRecognizeTextRequest { [weak self] request, error in
             self?.handleTextRecognition(request: request, error: error)
         }
@@ -162,7 +351,7 @@ class MRZDetectionHandler {
         textRequest.recognitionLanguages = ["en-US"]
         textRequest.minimumTextHeight = 0.015
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        let handler = VNImageRequestHandler(ciImage: croppedImage, orientation: .up, options: [:])
         
         do {
             try handler.perform([textRequest])
@@ -172,9 +361,33 @@ class MRZDetectionHandler {
         }
     }
     
+    private func cropToGuideBox(pixelBuffer: CVPixelBuffer) -> CIImage? {
+        guard let alignmentDetector = alignmentDetector else { return nil }
+        
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let fullWidth = CGFloat(CVPixelBufferGetWidth(pixelBuffer))
+        let fullHeight = CGFloat(CVPixelBufferGetHeight(pixelBuffer))
+        
+        let guideBox = alignmentDetector.guideBoxFrame
+        let previewBounds = alignmentDetector.cachedPreviewBounds
+        
+        guard previewBounds.width > 0, previewBounds.height > 0 else { return nil }
+        
+        let scaleX = fullWidth / previewBounds.width
+        let scaleY = fullHeight / previewBounds.height
+        
+        let cropRect = CGRect(
+            x: guideBox.minX * scaleX,
+            y: (previewBounds.height - guideBox.maxY) * scaleY,
+            width: guideBox.width * scaleX,
+            height: guideBox.height * scaleY
+        )
+        
+        return ciImage.cropped(to: cropRect)
+    }
+    
     // MARK: - Text Recognition Handler
     private func handleTextRecognition(request: VNRequest, error: Error?) {
-
         defer { resetOCRState() }
         
         guard let observations = request.results as? [VNRecognizedTextObservation] else {
@@ -182,7 +395,6 @@ class MRZDetectionHandler {
             return
         }
         
-        // Extract text with position info for sorting
         var candidates: [(text: String, y: CGFloat, confidence: Float)] = []
         
         for observation in observations {
@@ -191,7 +403,6 @@ class MRZDetectionHandler {
                 let y = observation.boundingBox.midY
                 let confidence = topCandidate.confidence
                 
-                // Pre-filter: check if it could be MRZ or EEP
                 if mrzValidator.isMRZLine(text) || mrzValidator.isEEPLine(text) {
                     candidates.append((text: text, y: y, confidence: confidence))
                     print("📝 MRZ candidate: \(text) (y: \(y), conf: \(confidence))")
@@ -199,7 +410,6 @@ class MRZDetectionHandler {
             }
         }
         
-        // Also collect all text for fallback
         var allTextLines: [String] = []
         for observation in observations {
             if let topCandidate = observation.topCandidates(1).first {
@@ -209,34 +419,30 @@ class MRZDetectionHandler {
         
         print("📝 Found \(candidates.count) MRZ candidates from \(observations.count) observations")
         
-        // Try to extract and parse MRZ
         if let extracted = mrzExtractor.extractMRZ(from: candidates, cleaner: mrzCleaner, validator: mrzValidator) {
             detectedMRZType = extracted.documentType
             if let result = mrzParserManager?.parseMRZ(lines: extracted.lines) {
                 print(result.description)
-                // Capture cropped image before showing results
                 let croppedImage = captureGuideBoxImage()
                 
                 DispatchQueue.main.async { [weak self] in
-                    self?.showResults(result,capturedImage: croppedImage)
+                    self?.showResults(result, capturedImage: croppedImage)
                 }
                 return
             }
-        }else{
-            print("📝 cant Found MRZ candidates from \(observations.count) observations")
-
+        } else {
+            print("📝 Can't find MRZ candidates from \(observations.count) observations")
         }
         
-        // Fallback: try parsing all lines
         let filteredLines = allTextLines.filter { $0.contains("<") || mrzValidator.isMRZLine($0) }
         if let result = mrzParserManager?.parseMRZ(lines: filteredLines) {
             print("MRZ parse result: " + result.description)
             let croppedImage = captureGuideBoxImage()
             DispatchQueue.main.async { [weak self] in
-                self?.showResults(result,capturedImage: croppedImage)
+                self?.showResults(result, capturedImage: croppedImage)
             }
             return
-        }else{
+        } else {
             print("Fail to parseMRZ")
         }
         
@@ -249,7 +455,6 @@ class MRZDetectionHandler {
     private func updateUI(with result: AlignmentResult) {
         updateInstructionLabel(instruction: result.instruction)
         
-        // Update document type based on detected MRZ type or aspect ratio
         if let mrzType = detectedMRZType {
             updateDocumentTypeLabelWithMRZType(mrzType)
         } else {
@@ -263,6 +468,7 @@ class MRZDetectionHandler {
     private func updateUIForNoDetection() {
         stableFrameCount = 0
         detectedMRZType = nil
+        smoothedRect = nil
         
         DispatchQueue.main.async { [weak self] in
             self?.updateInstructionLabel(instruction: .placeDocument)
@@ -328,13 +534,12 @@ class MRZDetectionHandler {
         
         guard previewBounds.width > 0, previewBounds.height > 0 else { return nil }
         
-        // Convert guide box to image coordinates (flip Y for Core Image)
         let scaleX = fullWidth / previewBounds.width
         let scaleY = fullHeight / previewBounds.height
         
         let cropRect = CGRect(
             x: guideBox.minX * scaleX,
-            y: (previewBounds.height - guideBox.maxY) * scaleY,  // Flip Y
+            y: (previewBounds.height - guideBox.maxY) * scaleY,
             width: guideBox.width * scaleX,
             height: guideBox.height * scaleY
         )
@@ -352,9 +557,11 @@ class MRZDetectionHandler {
         print("🔥 showResults called")
         print("🔥 delegate is: \(String(describing: delegate))")
         cameraManager?.pauseSession()
+        
         if let image = capturedImage {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         }
+        
         print("\n✅ ═══════════════════════════════")
         print("FINAL MRZ SCAN SUCCESS")
         print("═══════════════════════════════")
@@ -364,17 +571,12 @@ class MRZDetectionHandler {
         print("Document Type: \(result.documentType)")
         print("═══════════════════════════════\n")
         
-        // Prepare data dictionary
-        var data: [String: String] = [
+        let data: [String: String] = [
             Constants.EXTRA_DOC_NUM: result.documentNumber,
             Constants.EXTRA_DOB: result.dateOfBirth,
             Constants.EXTRA_EXPIRY: result.expiryDate,
             Constants.EXTRA_DOC_TYPE: result.documentType
         ]
-        
-
-        
-        // Call delegate instead of showing results view controller
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else {
@@ -385,17 +587,6 @@ class MRZDetectionHandler {
             self.delegate?.detectionHandler(self, didDetectMRZ: data)
         }
     }
-//        let resultsVC = ResultsViewController(result: result)
-//        resultsVC.onDismiss = { [weak self] in
-//            self?.resetScanner()
-//        }
-//        
-//        if let navigationController = context?.navigationController {
-//            navigationController.pushViewController(resultsVC, animated: true)
-//        } else {
-//            context?.present(resultsVC, animated: true)
-//        }
-//    }
     
     private func showParsingError() {
         resultLabel?.text = "Could not parse document. Please try again."
@@ -415,6 +606,7 @@ class MRZDetectionHandler {
     private func resetScanner() {
         resetOCRState()
         detectedMRZType = nil
+        smoothedRect = nil
         guidanceOverlay?.reset()
         resultLabel?.text = nil
         cameraManager?.resumeSession()

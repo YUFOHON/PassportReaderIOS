@@ -22,6 +22,9 @@ class DocumentAlignmentDetector {
     private var cachedGuideBoxFrame: CGRect = .zero
     private var _cachedPreviewBounds: CGRect = .zero
     
+    private var isCroppedMode: Bool = false
+    private var cropOffset: CGPoint = .zero
+    
     var cachedPreviewBounds: CGRect {
         return _cachedPreviewBounds  // rename internal property
     }
@@ -36,18 +39,22 @@ class DocumentAlignmentDetector {
     func updateCachedValues() {
         cachedGuideBoxFrame = guidanceOverlay?.guideBoxFrame ?? .zero
         _cachedPreviewBounds = previewView?.bounds ?? .zero
-        print("📐 Cached values updated - GuideBox: \(cachedGuideBoxFrame), Preview: \(cachedPreviewBounds)")
+//        print("📐 Cached values updated - GuideBox: \(cachedGuideBoxFrame), Preview: \(cachedPreviewBounds)")
     }
     
     // MARK: - Alignment Detection
-    func analyzeAlignment(observation: VNRectangleObservation) -> AlignmentResult {
+    func analyzeAlignment(observation: VNRectangleObservation,isCropped: Bool = false) -> AlignmentResult {
         guard cachedGuideBoxFrame != .zero, cachedPreviewBounds != .zero else {
             return .notDetected
         }
         
-        // Convert Vision coordinates to UIKit coordinates
-        let documentRect = convertToUIKitCoordinates(observation.boundingBox)
-        
+        let documentRect: CGRect 
+        if isCropped {
+            // Vision coords are relative to guide box when cropped
+            documentRect = convertCroppedToUIKitCoordinates(observation.boundingBox)
+        } else {
+            documentRect = convertToUIKitCoordinates(observation.boundingBox)
+        }
         // Detect document type based on aspect ratio
         let aspectRatio = documentRect.width / documentRect.height
         let documentType = DocumentType.detect(from: aspectRatio)
@@ -56,6 +63,9 @@ class DocumentAlignmentDetector {
         let sizeRatio = calculateSizeRatio(documentRect: documentRect)
         let centerOffset = calculateCenterOffset(documentRect: documentRect)
         let overlapRatio = calculateOverlapRatio(documentRect: documentRect)
+        
+        print("sizeRatio is: \(sizeRatio) centerOffset is: \(centerOffset) overlapRatio is \(overlapRatio)")
+
         
         // Determine instruction
         let instruction = determineInstruction(
@@ -80,6 +90,16 @@ class DocumentAlignmentDetector {
             detectedRect: documentRect,
             documentType: documentType
         )
+    }
+    
+    private func convertCroppedToUIKitCoordinates(_ visionRect: CGRect) -> CGRect {
+        // Vision coordinates are now relative to the cropped guide box
+        let x = cachedGuideBoxFrame.minX + visionRect.minX * cachedGuideBoxFrame.width
+        let y = cachedGuideBoxFrame.minY + (1 - visionRect.maxY) * cachedGuideBoxFrame.height
+        let width = visionRect.width * cachedGuideBoxFrame.width
+        let height = visionRect.height * cachedGuideBoxFrame.height
+        
+        return CGRect(x: x, y: y, width: width, height: height)
     }
     
     // MARK: - Coordinate Conversion
