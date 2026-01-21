@@ -186,6 +186,8 @@ class PassportReader {
                             return "✅ Success!"
                         case .error(let error):
                             return "Error: \(error.localizedDescription)"
+                        case .activeAuthentication:
+                            return "activeAuthentication"
                         }
                     }
                 )

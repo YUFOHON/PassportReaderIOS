@@ -1,0 +1,148 @@
+{
+  "project_info": {
+    "project_name": "PassportReader",
+    "path": "/Users/fohonyu/Downloads/CSQMS/PassportReader/PassportReader.xcodeproj",
+    "targets": [
+      "\"[CP] Embed Pods Frameworks\"",
+      "DocumentReaderSDK",
+      "\"[CP] Check Pods Manifest.lock\"",
+      "\"Embed Frameworks\"",
+      "PassportReaderTests",
+      "\"Pods-PassportReader.release.xcconfig\"",
+      "Base",
+      "Debug",
+      "Products",
+      "PassportReader"
+    ],
+    "deployment_target": "17.2",
+    "has_workspace": false
+  },
+  "files": [
+    {
+      "path": "PassportReader/Constants.swift",
+      "issues": [
+        "No public access modifiers - will need to add them"
+      ],
+      "recommendations": [
+        "Good candidate for framework (no UI dependency)"
+      ]
+    },
+    {
+      "path": "PassportReader/ViewController.swift",
+      "issues": [
+        "Contains ViewController - might be app-specific",
+        "No public access modifiers - will need to add them"
+      ],
+      "recommendations": []
+    },
+    {
+      "path": "PassportReader/ScanOverlayView.swift",
+      "issues": [
+        "No public access modifiers - will need to add them"
+      ],
+      "recommendations": [
+        "Potential reusable UI component"
+      ]
+    },
+    {
+      "path": "PassportReader/DocumentReaderSDK+Cordova.swift",
+      "issues": [],
+      "recommendations": [
+        "Already has public API design"
+      ]
+    },
+    {
+      "path": "PassportReader/DocumentReaderSDK.swift",
+      "issues": [
+        "Contains ViewController - might be app-specific"
+      ],
+      "recommendations": [
+        "Already has public API design"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "type": "CocoaPods",
+      "file": "Podfile",
+      "message": "Project uses CocoaPods for dependency management"
+    }
+  ],
+  "issues": [
+    {
+      "type": "ViewController",
+      "file": "PassportReader/ViewController.swift",
+      "message": "ViewControllers are usually app-specific"
+    },
+    {
+      "type": "ViewController",
+      "file": "PassportReader/ViewControllers/CameraViewController.swift",
+      "message": "ViewControllers are usually app-specific"
+    }
+  ],
+  "recommendations": [],
+  "conversion_plan": [
+    "BACKUP YOUR PROJECT before starting",
+    "Create a new branch in git: git checkout -b framework-conversion",
+    "Open project in Xcode and add new Framework target",
+    "Name it: {project_name}Framework (e.g., MyAppFramework)",
+    "Create folder structure in project:",
+    "  - Sources/ (for framework code)",
+    "  - Resources/ (for assets, strings)",
+    "  - Tests/ (for framework unit tests)",
+    "Move 12 framework candidate files to new Sources folder",
+    "Update access modifiers in framework files:",
+    "  - Change 'class' to 'public class' for public APIs",
+    "  - Change 'func' to 'public func' for public methods",
+    "  - Use 'open' for classes meant to be subclassed",
+    "Update resource loading to use framework bundle",
+    "Build framework target (Cmd+B)",
+    "Create unit tests for framework",
+    "Test integration with main app",
+    "Choose distribution method:",
+    "  - Swift Package Manager (recommended)",
+    "  - CocoaPods",
+    "  - Manual .xcframework distribution"
+  ],
+  "stats": {
+    "file_types": {
+      ".swift": 36,
+      ".m": 0,
+      ".h": 2,
+      ".storyboard": 2,
+      ".xib": 0,
+      ".json": 3,
+      ".plist": 4,
+      ".png": 0,
+      ".jpg": 0,
+      ".strings": 0
+    },
+    "total_swift_files": 36,
+    "total_objc_files": 2,
+    "total_lines_of_code": 7244,
+    "ui_files": 2
+  },
+  "framework_candidates": [
+    "PassportReader/Constants.swift",
+    "PassportReader/ViewController.swift",
+    "PassportReader/ScanOverlayView.swift",
+    "PassportReader/DocumentReaderSDK+Cordova.swift",
+    "PassportReader/DocumentReaderSDK.swift",
+    "PassportReader/OCRProcessor.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/AES_3DES_DESEncryption.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/Logging.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/ResponseAPDU.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/SimpleASN1DumpParser.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/X509Wrapper.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/OpenSSLUtils.swift"
+  ],
+  "app_specific_files": [
+    "PassportReader/AppDelegate.swift",
+    "PassportReader/SceneDelegate.swift",
+    "Pods/NFCPassportReader/Sources/NFCPassportReader/DataGroupParser.swift"
+  ],
+  "pod_dependencies": [
+    "NFCPassportReader",
+    "QKMRZScanner"
+  ]
+}
